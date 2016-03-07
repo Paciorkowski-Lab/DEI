@@ -35,7 +35,7 @@ cat("You entered ")
 
 cat("Please enter filename 2: ")
 y <- readLines("stdin",n=1L)
-if (x == "")
+if (y == "")
   cat("\nNo file name entered. Program terminated.\n")
 cat("You entered ")
   cat(y)
