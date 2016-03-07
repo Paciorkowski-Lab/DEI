@@ -46,3 +46,45 @@ cat("\nOkay, proceeding with analysis with files ")
   cat(" and ") 
   cat(y) 
   cat(".\n")
+
+# Get the data
+data_x <- read.csv(x,header=TRUE, sep=",")
+data_y <- read.csv(y,header=TRUE, sep=",")
+
+cat("There are ") 
+cat(nrow(data_x))
+cat(" subjects in ")
+cat(x)
+cat(" and ")
+cat(nrow(data_y))
+cat(" in ")
+cat(y)
+cat(".\n")
+
+# Remove Subject ID column (first column)
+
+clean_x <- x[-1]
+clean_y <- y[-1]
+
+# Library of categories
+
+category <- names(x)
+
+# Comparison of means between categories (t-test)
+
+#for (i in category) {
+#t.test(clean_x$i,clean_y$i)
+#}
+
+
+
+
+# Correlations across categories
+
+
+
+# Covariance analysis
+
+# Cluster analysis
+
+# Principal Component Analysis
