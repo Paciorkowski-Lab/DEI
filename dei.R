@@ -68,7 +68,7 @@ clean_y <- y[-1]
 
 # Library of categories
 
-category <- names(x)
+category <- names(clean_x)
 
 # Comparison of means between categories (t-test)
 
