@@ -72,7 +72,7 @@ category <- names(clean_x)
 
 # Comparison of means between categories (t-test)
 
-for (i in category) {
+for (i in category) try {
 result <- t.test(clean_x[i],clean_y[i])
  cat(i)
  print(result)
