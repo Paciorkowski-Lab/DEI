@@ -72,10 +72,16 @@ category <- names(clean_x)
 
 # Comparison of means between categories (t-test)
 
-#for (i in category) {
-#t.test(clean_x$i,clean_y$i)
-#}
+for (i in category) {
+result <- t.test(clean_x[i],clean_y[i])
+ cat(i)
+ print(result)
+}
 
+# More elegant in R of course is to use tapply
+# But this does not work if vectors are of different length
+# all <- c(clean_x,clean_y)
+# result <- tapply(all, category, t.test)
 
 
 
