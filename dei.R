@@ -63,8 +63,8 @@ cat(".\n")
 
 # Remove Subject ID column (first column)
 
-clean_x <- x[-1]
-clean_y <- y[-1]
+clean_x <- data_x[-1]
+clean_y <- data_y[-1]
 
 # Library of categories
 
