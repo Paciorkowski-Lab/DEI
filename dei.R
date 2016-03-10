@@ -8,7 +8,7 @@
 #
 # This is an R script that takes as input DEI data in csv format, and outputs results of analyses.
 #
-# Requires: R 3.1.2, cluster, pvclust, rgl, FactoMineR, 
+# Requires: Hmisc, cluster, pvclust, rgl, FactoMineR, 
 #
 # Usage: $ Rscript dei.R
 #
@@ -86,9 +86,21 @@ result <- t.test(clean_x[i],clean_y[i])
 
 
 # Correlations across categories
+# This uses library Hmisc so we can use rcorr()
+# Input data must be matrix
 
-# Use tapply for cor.test across data.frame
+library(Hmisc)
 
+category_rev <- rev(category)
+
+for (i in category) {
+	for (j in category_rev) try ({
+		result <- rcorr(as.matrix(clean_x[i]), as.matrix(clean_x[j]), type = "spearman")
+		cat("Spearman rho:\n")
+		print(result)
+		cat("\n")
+	})
+}
 
 # Covariance analysis
 
