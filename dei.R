@@ -87,6 +87,7 @@ result <- t.test(clean_x[i],clean_y[i])
 
 # Correlations across categories
 
+# Use tapply for cor.test across data.frame
 
 
 # Covariance analysis
