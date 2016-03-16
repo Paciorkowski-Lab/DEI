@@ -123,3 +123,9 @@ fit <- pvclust(clean_y_summary_nona, method.hclust="ward.D", method.dist="euclid
 plot(fit)
 
 # Principal Component Analysis
+
+library(FactoMineR)
+result <- PCA(clean_x_summary)
+result <- PCA(clean_y_summary)
+
+# Other functions...
