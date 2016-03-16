@@ -104,4 +104,22 @@ for (i in category) {
 
 # Cluster analysis
 
+library(pvclust)
+
+clean_x_summary <- clean_x[,1:12]
+
+clean_x_summary_nona <- na.omit(clean_x_summary)
+
+fit <- pvclust(clean_x_summary_nona, method.hclust="ward.D", method.dist="euclidean")
+
+plot(fit)
+
+clean_y_summary <- clean_y[,1:12]
+
+clean_y_summary_nona <- na.omit(clean_y_summary)
+
+fit <- pvclust(clean_y_summary_nona, method.hclust="ward.D", method.dist="euclidean")
+
+plot(fit)
+
 # Principal Component Analysis
