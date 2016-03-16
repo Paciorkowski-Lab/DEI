@@ -20,7 +20,6 @@ cat("Takes as input .csv files appropriately formatted (see user documentation p
 cat("Analyses done here include:\n")
 cat("Comparison of means between categories (t-test)\n")
 cat("Correlations across categories\n")
-cat("Covariance analysis\n")
 cat("Cluster analysis\n")
 cat("Principal Component Analysis\n")
 cat("***************************\n")
