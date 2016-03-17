@@ -8,7 +8,7 @@
 #
 # This is an R script that takes as input DEI data in csv format, and outputs results of analyses.
 #
-# Requires: Hmisc, cluster, pvclust, FactoMineR, 
+# Requires: Hmisc, pvclust, FactoMineR, 
 #
 # Usage: $ Rscript dei.R
 #
@@ -60,7 +60,10 @@ cat(" in ")
 cat(y)
 cat(".\n")
 
-# Remove Subject ID column (first column)
+# Manage Subject ID column (first column)
+
+row.names(data_x)<-data_x$Subject
+row.names(data_y)<-data_y$Subject
 
 clean_x <- data_x[-1]
 clean_y <- data_y[-1]
@@ -105,18 +108,21 @@ for (i in category) {
 # Cluster analysis
 
 library(pvclust)
+# Generates figures in Rplots.pdf in the same directory
 
-clean_x_summary <- clean_x[,1:12]
+# Only analyzes the 12 main categories (summary scores)
+
+clean_x_summary <- data_x[,2:13]
+clean_y_summary <- data_y[,2:13]
+
+# Removes NA values
 
 clean_x_summary_nona <- na.omit(clean_x_summary)
+clean_y_summary_nona <- na.omit(clean_y_summary)
 
 fit <- pvclust(clean_x_summary_nona, method.hclust="ward.D", method.dist="euclidean")
 
 plot(fit)
-
-clean_y_summary <- clean_y[,1:12]
-
-clean_y_summary_nona <- na.omit(clean_y_summary)
 
 fit <- pvclust(clean_y_summary_nona, method.hclust="ward.D", method.dist="euclidean")
 
