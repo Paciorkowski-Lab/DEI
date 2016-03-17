@@ -8,10 +8,11 @@
 #
 # This is an R script that takes as input DEI data in csv format, and outputs results of analyses.
 #
-# Requires: Hmisc, pvclust, FactoMineR, 
+# Requires: Hmisc, cluster, pvclust, FactoMineR, 
 #
 # Usage: $ Rscript dei.R
 #
+
 cat("\n**************************\n")
 cat("Welcome to DEI version 1.0\n")
 cat("\nPaciorkowski Lab, 2016\n")
@@ -60,6 +61,29 @@ cat(" in ")
 cat(y)
 cat(".\n")
 
+# Set up written report for all results
+
+write("Developmental Encephalopathy Inventory Analysis", file = "DEI_Analysis.txt", append = FALSE, sep = "\n")
+
+write(date(), file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+
+write("\nResults for the files:", file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+
+write(x, file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+write(y, file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+
+# Set up written report for only significant results (p<0.05)
+
+write("Developmental Encephalopathy Inventory Analysis", file = "DEI_Analysis_Significant.txt", append = FALSE, sep = "\n")
+
+write(date(), file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
+
+write("\nSignificant results only (p<0.05) for the files:", file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
+
+write(x, file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
+write(y, file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
+write("**********", file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
+
 # Manage Subject ID column (first column)
 
 row.names(data_x)<-data_x$Subject
@@ -74,17 +98,35 @@ category <- names(clean_x)
 
 # Comparison of means between categories (t-test)
 
+cat("\nComparison of means between categories (t-test)...\n")
+
+write("**********", file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+write("Results of comparison of means between categories (t-test)", file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+
 for (i in category) try ({
-result <- t.test(clean_x[i],clean_y[i])
- cat(i)
- print(result)
-})
+	result <- t.test(clean_x[i],clean_y[i])
+	lapply(i, write, file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+	write("Mean of x, mean of y", file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+	lapply(result$estimate, write, file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+	write("P-value:", file = "DEI_Analysis.txt", append = TRUE, sep ="\n")
+	lapply(result$p.value, write, file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+	if (result$p.value < 0.05) {
+		write("**SIGNIFICANT**", file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+		lapply(i, write, file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
+		write("Mean of x, mean of y", file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
+		lapply(result$estimate, write, file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
+		write("P-value:", file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
+		lapply(result$p.value, write, file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
+		write("**SIGNIFICANT**", file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
+		write("**********", file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
+	}
+	write("**********", file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+}, silent = TRUE )
 
 # More elegant in R of course is to use tapply
 # But this does not work if vectors are of different length
 # all <- c(clean_x,clean_y)
 # result <- tapply(all, category, t.test)
-
 
 
 # Correlations across categories
@@ -95,34 +137,85 @@ library(Hmisc)
 
 category_rev <- rev(category)
 
+cat("\nCorrelation analysis using spearman rho...\n")
+
+write("**********", file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+write("Correlations for: ", file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+lapply(x, write, file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+
 for (i in category) {
 	for (j in category_rev) try ({
 		result <- rcorr(as.matrix(clean_x[i]), as.matrix(clean_x[j]), type = "spearman")
-		cat("Spearman rho:\n")
-		print(result)
-		cat("\n")
-	})
+		lapply(i, write, file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+		lapply(j, write, file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+		write("Spearman rho:", file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+		lapply(result$r, write, file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+		write("P-value:", file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+		lapply(result$P, write, file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+		if (result$P[1,2] < 0.05) {
+			write("**SIGNIFICANT**", file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+			lapply(i, write, file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
+			lapply(j, write, file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
+			write("Spearman rho:", file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
+			lapply(result$r, write, file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
+			write("P-value:", file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
+			lapply(result$P, write, file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
+			write("**SIGNIFICANT**", file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
+			write("**********", file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n") }
+		write("**********", file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+	}, silent = TRUE)
 }
 
+write("Correlations for: ", file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+lapply(y, write, file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+
+for (i in category) {
+	for (j in category_rev) try ({
+		result <- rcorr(as.matrix(clean_y[i]), as.matrix(clean_y[j]), type = "spearman")
+		lapply(i, write, file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+		lapply(j, write, file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+		write("Spearman rho:", file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+		lapply(result$r, write, file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+		write("P-value:", file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+		lapply(result$P, write, file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+		if (result$P[1,2] < 0.05) {
+			write("**SIGNIFICANT**", file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+			lapply(i, write, file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
+			lapply(j, write, file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
+			write("Spearman rho:", file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
+			lapply(result$r, write, file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
+			write("P-value:", file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
+			lapply(result$P, write, file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
+			write("**SIGNIFICANT**", file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
+			write("**********", file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n") }
+		write("**********", file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+	}, silent = TRUE)
+}
+
+cat("\nWarnings are silenced since during testing they weren't helpful...\n")
 
 # Cluster analysis
+# Generates figures in Rplots.pdf in the same directory
 
 library(pvclust)
-# Generates figures in Rplots.pdf in the same directory
+
+cat("\nCluster analysis...\n")
 
 # Only analyzes the 12 main categories (summary scores)
 
 clean_x_summary <- data_x[,2:13]
-clean_y_summary <- data_y[,2:13]
 
 # Removes NA values
 
 clean_x_summary_nona <- na.omit(clean_x_summary)
-clean_y_summary_nona <- na.omit(clean_y_summary)
 
 fit <- pvclust(clean_x_summary_nona, method.hclust="ward.D", method.dist="euclidean")
 
 plot(fit)
+
+clean_y_summary <- data_y[,2:13]
+
+clean_y_summary_nona <- na.omit(clean_y_summary)
 
 fit <- pvclust(clean_y_summary_nona, method.hclust="ward.D", method.dist="euclidean")
 
@@ -131,7 +224,15 @@ plot(fit)
 # Principal Component Analysis
 
 library(FactoMineR)
+
+cat("\nPrincipal Component Analysis...\n")
+
 result <- PCA(clean_x_summary)
 result <- PCA(clean_y_summary)
 
-# Other functions...
+# Final words
+cat("\nAll t-test and correlation test results are found in 'DEI_Analysis.txt' in the current working directory.\n")
+cat("\nAll significant (p<0.05) results are found in 'DEI_Analysis_Significant.txt' in the current working directory.\n")
+cat("\nCluster analysis results are found in Rplot.pdf output.\n")
+cat("\nPCA results are also found in Rplot.pdf output.\n")
+cat("\nGoodbye.\n")
