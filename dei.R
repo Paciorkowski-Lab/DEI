@@ -8,7 +8,7 @@
 #
 # This is an R script that takes as input DEI data in csv format, and outputs results of analyses.
 #
-# Requires: Hmisc, cluster, pvclust, rgl, FactoMineR, 
+# Requires: Hmisc, cluster, pvclust, FactoMineR, 
 #
 # Usage: $ Rscript dei.R
 #
