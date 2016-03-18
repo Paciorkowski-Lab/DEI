@@ -19,7 +19,7 @@ cat("\nPaciorkowski Lab, 2016\n")
 cat("\nThis software performs analysis of data from the Developmental Encephalopathy Inventory.\n")
 cat("Takes as input .csv files appropriately formatted (see user documentation please.)\n")
 cat("Analyses done here include:\n")
-cat("Comparison of means between categories (t-test)\n")
+cat("Comparison of means between categories (Wilcoxon / Mann Whitney U)\n")
 cat("Correlations across categories\n")
 cat("Cluster analysis\n")
 cat("Principal Component Analysis\n")
@@ -96,25 +96,34 @@ clean_y <- data_y[-1]
 
 category <- names(clean_x)
 
-# Comparison of means between categories (t-test)
+# Comparison of means between categories (Wilcoxon / Mann Whitney U)
 
-cat("\nComparison of means between categories (t-test)...\n")
+cat("\nComparison of means between categories (Wilcoxon / Mann Whitney U)...\n")
 
 write("**********", file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
-write("Results of comparison of means between categories (t-test)", file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+write("Results of comparison of means between categories (Wilcoxon / Mann Whitney U)", file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+
+# for (i in category) try ({
+#	result <- wilcox.test(unlist(clean_x[i]), unlist(clean_y[i]))
 
 for (i in category) try ({
-	result <- t.test(clean_x[i],clean_y[i])
+	result_mean_x <- mean(unlist(clean_x[i]))
+	result_mean_y <- mean(unlist(clean_y[i]))
+	result <- wilcox.test(unlist(clean_x[i]), unlist(clean_y[i]))
 	lapply(i, write, file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
-	write("Mean of x, mean of y", file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
-	lapply(result$estimate, write, file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+	write("Mean of x:", file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+	lapply(result_mean_x, write, file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+	write("Mean of y:", file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
+	lapply(result_mean_y, write, file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
 	write("P-value:", file = "DEI_Analysis.txt", append = TRUE, sep ="\n")
 	lapply(result$p.value, write, file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
 	if (result$p.value < 0.05) {
 		write("**SIGNIFICANT**", file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
 		lapply(i, write, file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
-		write("Mean of x, mean of y", file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
-		lapply(result$estimate, write, file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
+		write("Mean of x:", file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
+		lapply(result_mean_x, write, file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
+		write("Mean of y:", file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
+		lapply(result_mean_y, write, file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
 		write("P-value:", file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
 		lapply(result$p.value, write, file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
 		write("**SIGNIFICANT**", file = "DEI_Analysis_Significant.txt", append = TRUE, sep = "\n")
@@ -122,11 +131,6 @@ for (i in category) try ({
 	}
 	write("**********", file = "DEI_Analysis.txt", append = TRUE, sep = "\n")
 }, silent = TRUE )
-
-# More elegant in R of course is to use tapply
-# But this does not work if vectors are of different length
-# all <- c(clean_x,clean_y)
-# result <- tapply(all, category, t.test)
 
 
 # Correlations across categories
